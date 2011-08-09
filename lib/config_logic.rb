@@ -4,15 +4,16 @@ $: << File.dirname(__FILE__)
 require 'rubygems'
 require 'active_support/core_ext'
 require 'buffered_logger'
+require 'forwardable'
+require 'delegate'
 
-class ConfigLogic
+class ConfigLogic < SimpleDelegator
   module Logger; end
   include ConfigLogic::Logger
 end
 
-core_extensions = Dir['config_logic/core_ext/*.rb']
-core_extensions.each { |file| require file }
-
+require 'config_logic/core_ext/array'
+require 'config_logic/core_ext/hash'
 require 'config_logic/logger'
 require 'config_logic/cache'
 require 'config_logic/file_cache'

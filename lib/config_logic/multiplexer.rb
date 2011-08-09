@@ -1,9 +1,11 @@
 class ConfigLogic::Multiplexer < ConfigLogic::LogicElement
 
+  attr_reader :selector
+
   def initialize(params)
     super
     @inputs = params[:input_names].zip(params[:inputs]).to_hash
-    @selector = Proc.new { params[:selector] }
+    @selector = params[:selector]
   end
 
   def output

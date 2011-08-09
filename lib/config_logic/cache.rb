@@ -1,29 +1,28 @@
-class ConfigLogic::Cache
+class ConfigLogic::Cache < SimpleDelegator
   include ConfigLogic::Logger
   include Enumerable
 
-  def empty?
-    primary_cache.empty?
+  def initialize(load_paths, params = {})
+    @load_paths = load_paths
+    reload!(params)
+    super(@cache)
   end
 
   def reload!(params = {})
-    rebuild_primary_cache!(params)
+    __setobj__(@cache)
     self
   end
 
-  def inspect
-    primary_cache.inspect
+private
+
+  def rebuild_primary_cache(params)
+    {}
   end
 
   def each
-    primary_cache.each do |node|
+    @cache.each do |node|
       yield node
     end
   end
 
-  def size
-    primary_cache.size
-  end
-  alias :count :size
 end
-

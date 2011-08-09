@@ -1,30 +1,29 @@
 class ConfigLogic::TreeCache < ConfigLogic::Cache
 
   def initialize(load_paths, params = {})
-    @load_paths = load_paths
     @global_logic = { ConfigLogic::Multiplexer => params[:multiplexers], 
                       ConfigLogic::Overlay => params[:overlays] }
-    reload!(params)
+    super
   end
 
   def [](*key_path)
-    return @tree_cache if key_path.blank?
-    key_path.inject(@tree_cache) do |val, key|
+    return @cache if key_path.blank?
+    key_path.inject(@cache) do |val, key|
       val[key] if val
     end
   end
 
-protected
-
-  def primary_cache
-    @tree_cache
+  def reload!(params = {})
+    @cache = rebuild_primary_cache(params)
+    trim_cache! unless params[:no_trim]
+    @flat_cache = flatten_tree_cache
+    apply_global_logic!
+    super
   end
 
 private
 
-# tree cache helpers
-
-  def rebuild_primary_cache!(params)
+  def rebuild_primary_cache(params)
     file_cache = ConfigLogic::FileCache.new(@load_paths)
     return {} unless valid_file_cache?(file_cache)
 
@@ -32,11 +31,7 @@ private
     file_cache.each do |path, content|
       tree_cache = tree_cache.weave(hashify_path(path, content))
     end
-
-    @tree_cache = tree_cache
-    trim_cache! unless params[:no_trim]
-    @flat_cache = flatten_tree_cache
-    apply_global_logic!
+    tree_cache
   end
 
   def hashify_path(path, content)
@@ -48,10 +43,10 @@ private
   end
 
   def trim_cache!
-    return if @tree_cache.size > 1
+    return if @cache.size > 1
 
-    until @tree_cache.size > 1 do
-      @tree_cache = @tree_cache[@tree_cache.keys.first]
+    until @cache.size > 1 do
+      @cache = @cache[@cache.keys.first]
     end
   end
 
@@ -65,7 +60,7 @@ private
         else hashes end
       end.flatten
     end
-    flatten.call(@tree_cache) << @tree_cache
+    flatten.call(@cache) << @cache
   end
 
   def nodes_at(keys, min_matches = 1)

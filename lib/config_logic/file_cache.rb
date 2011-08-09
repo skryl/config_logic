@@ -10,38 +10,29 @@ class ConfigLogic::FileCache < ConfigLogic::Cache
 
   VALID_EXTENSIONS = PARSER_MAP.map { |(extensions, parser_proc)| extensions }.flatten!.freeze
 
-  def initialize(load_paths)
-    @load_paths = load_paths
-    reload!
-  end
-
-protected
-
-  def primary_cache
-    @cache
+  def reload!(params = {})
+    @cache = rebuild_primary_cache(params)
+    super
   end
 
 private
 
-# cache helpers
-
-  def rebuild_primary_cache!(params)
+  def rebuild_primary_cache(params)
     file_cache = []
-    @load_paths.each do |path|
-      next unless load_path_exists?(path)
+    load_file = Proc.new do |path|
+    end
 
-      if File.file?(path) && valid_file_ext?(path)
-        file_cache << load_file(path)
-        log.debug "found file #{BLUE} #{path}"
-      elsif File.directory?(path)
-        find_valid_files(path).each do |file|
-          file_cache << load_file(file)
-          log.debug "found file #{BLUE} #{file}"
-        end
-      end
+    valid_files = @load_paths.inject([]) do |valid, path| 
+      valid << find_valid_files(path)
+    end.flatten
+
+    valid_files.each do |path|
+      content = parse(path)
+      file_cache << [path, content] if content
+      log.debug "found file #{BLUE} #{path}"
     end 
 
-    @cache = file_cache.compact.inject({}) do 
+    file_cache.inject({}) do 
       |h, (path, content)| h[path] = content; h
     end
   end
@@ -56,21 +47,20 @@ private
 
 # parsing helpers
 
-  def load_file(path)
-    [path, parse(path)]
-  end
-
   def parse(path)
-    parser = find_parser(path).last
+    parser = find_parser(path)
+    return unless parser
+
     begin
-      parser ? parser.call(path) : nil
+      parser.call(path)
     rescue => e
       log.warn "#{RED} #{path} #{RESET} is not a valid config file"
     end
   end
 
   def find_parser(path)
-    PARSER_MAP.detect { |(extensions, parse_proc)| extensions.include?(File.extname(path)) }
+    parser = PARSER_MAP.detect { |(extensions, parse_proc)| extensions.include?(File.extname(path)) }
+    parser ? parser.last : nil
   end
 
 # path helpers
