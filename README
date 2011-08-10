@@ -9,6 +9,77 @@ wraps any set of config files in a managed access layer which supports
 - dynamic or static multiplexing
 
 
+USAGE
+-------------------------------------------------------------------------------
+Imagine that your application has a config directory with the following layout:
+
+config -->
+
+    /config.yml -->
+
+        { :key1 => 1, 
+          :key2 => 2, 
+          :key3 => 3 }
+
+    /config_test.yml -->
+
+        { :key1 => 11, 
+          :key2 => 12, 
+          :key3 => 13 }
+
+  /dir1 -->
+
+      /config1.yml -->
+
+        { :key1 => 1, 
+          :key2 => 2, 
+          :key3 => 3 }
+
+  /dir2 -->
+
+      /config2.yml -->
+
+        { :key4 => 4, 
+          :key5 => 5, 
+          :key6 => 6 }
+
+
+### Initialization ###
+
+c = ConfigLogic.new('path/to/config/dir')
+
+
+### Rebuilding the config cache ###
+
+c.reload!
+
+
+### Accessing config data ###
+
+c.config.key1        => 1
+c[:config][:key1]    => 1
+c['config']['key1']  => 1
+c(:config, :key1)    => 1
+c('config', 'key1')  => 1
+
+
+### Applying overlays during initialization ###
+
+c = ConfigLogic.new('path/to/config/dir', :overlays => [ { :name => 'config',
+                                                           :inputs => [:config, :config_test] } ] )
+c.config.key1 => 11
+c.config.key2 => 12
+c.config.key3 => 13
+
+
+### Applying multiplexers before initialization ###
+
+c = ConfigLogic.new('path/to/config/dir', :multiplexers => [ { :name => 'key',
+                                                               :selector => Proc.new { "key#{1 + 1}".to_sym} },
+                                                               :inputs => [:key1, :key2, :key3] } ] )
+c.config.key => 2
+
+
 CREDITS
 -------------------------------------------------------------------------------
 Inspired by RConfig (Rahmal Conda) / activeconfig (Enova Financial)

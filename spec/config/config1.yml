@@ -2,3 +2,11 @@
   :nestedkey1: 1
   :nestedkey2: 2
   :nestedkey3: 3
+:key2:
+  :nestedkey4: 4
+  :nestedkey5: 5
+  :nestedkey6: 6
+:key3:
+  :nestedkey7: 7
+  :nestedkey8: 8
+  :nestedkey9: 9
