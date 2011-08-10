@@ -1,0 +1,14 @@
+ABOUT
+-------------------------------------------------------------------------------
+Config Logic is a configuration management tool for Ruby/Rails applications. It
+wraps any set of config files in a managed access layer which supports
+
+- multi argument, hash style, or method access
+- caching
+- overlays
+- dynamic or static multiplexing
+
+
+CREDITS
+-------------------------------------------------------------------------------
+Inspired by RConfig (Rahmal Conda) / activeconfig (Enova Financial)
