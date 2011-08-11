@@ -2,7 +2,8 @@ $: << File.dirname(__FILE__)
 
 # global
 require 'rubygems'
-require 'active_support/core_ext'
+require 'active_support/core_ext/class'
+require 'active_support/core_ext/string'
 require 'buffered_logger'
 require 'forwardable'
 require 'delegate'

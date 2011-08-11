@@ -1,17 +1,30 @@
-ABOUT
--------------------------------------------------------------------------------
+= Config Logic
+
 Config Logic is a configuration management tool for Ruby/Rails applications. It
 wraps any set of config files in a managed access layer which supports
 
-- multi argument, hash style, or method access
-- caching
-- overlays
-- dynamic or static multiplexing
+* caching
+* multi argument, hash style, or dot style access
+* multi config overlays
+* dynamic or static multiplexing of config branches
 
 
-USAGE
--------------------------------------------------------------------------------
-Imagine that your application has a config directory with the following layout:
+== Requirements
+
+The following gems will be installed along with config_logic
+
+* activesupport (2.2.2+)
+* buffered_logger (0.1.2+)
+
+
+== Installation
+
+>> gem install config_logic
+
+
+== Usage
+
+Imagine that your application has a config directory with the following layout
 
 config -->
 
@@ -44,17 +57,17 @@ config -->
           :key6 => 6 }
 
 
-### Initialization ###
+=== Initialization
 
 c = ConfigLogic.new('path/to/config/dir')
 
 
-### Rebuilding the config cache ###
+=== Rebuilding the Config Cache
 
 c.reload!
 
 
-### Accessing config data ###
+=== Data Access
 
 c.config.key1        => 1
 c[:config][:key1]    => 1
@@ -63,7 +76,7 @@ c(:config, :key1)    => 1
 c('config', 'key1')  => 1
 
 
-### Applying overlays during initialization ###
+=== Applying Overlays
 
 c = ConfigLogic.new('path/to/config/dir', :overlays => [ { :name => 'config',
                                                            :inputs => [:config, :config_test] } ] )
@@ -72,7 +85,7 @@ c.config.key2 => 12
 c.config.key3 => 13
 
 
-### Applying multiplexers before initialization ###
+=== Applying Multiplexers
 
 c = ConfigLogic.new('path/to/config/dir', :multiplexers => [ { :name => 'key',
                                                                :selector => Proc.new { "key#{1 + 1}".to_sym} },
@@ -80,6 +93,6 @@ c = ConfigLogic.new('path/to/config/dir', :multiplexers => [ { :name => 'key',
 c.config.key => 2
 
 
-CREDITS
--------------------------------------------------------------------------------
+== Credits
+
 Inspired by RConfig (Rahmal Conda) / activeconfig (Enova Financial)
