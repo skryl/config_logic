@@ -19,78 +19,78 @@ The following gems will be installed along with config_logic
 
 == Installation
 
-=> gem install config_logic
+  gem install config_logic
 
 
 == Usage
 
 Imagine that your application has a config directory with the following layout
 
-config -->
+  config -->
 
-    /config.yml -->
+      /config_prod.yml -->
 
-        { :key1 => 1, 
-          :key2 => 2, 
-          :key3 => 3 }
+          { :key1 => 1, 
+            :key2 => 2, 
+            :key3 => 3 }
 
-    /config_test.yml -->
+      /config_dev.yml -->
 
-        { :key1 => 11, 
-          :key2 => 12, 
-          :key3 => 13 }
+          { :key1 => 11, 
+            :key2 => 12, 
+            :key3 => 13 }
 
-  /dir1 -->
+    /dir1 -->
 
-      /config1.yml -->
+        /config1.yml -->
 
-        { :key1 => 1, 
-          :key2 => 2, 
-          :key3 => 3 }
+          { :key1 => 1, 
+            :key2 => 2, 
+            :key3 => 3 }
 
-  /dir2 -->
+    /dir2 -->
 
-      /config2.yml -->
+        /config2.yml -->
 
-        { :key4 => 4, 
-          :key5 => 5, 
-          :key6 => 6 }
+          { :key4 => 4, 
+            :key5 => 5, 
+            :key6 => 6 }
 
 
 === Initialization
 
-c = ConfigLogic.new('path/to/config/dir')
+  c = ConfigLogic.new('path/to/config/dir')
 
 
 === Rebuilding the Config Cache
 
-c.reload!
+  c.reload!
 
 
 === Data Access
 
-c.config.key1        => 1
-c[:config][:key1]    => 1
-c['config']['key1']  => 1
-c(:config, :key1)    => 1
-c('config', 'key1')  => 1
+  c.config.key1        => 1
+  c[:config][:key1]    => 1
+  c['config']['key1']  => 1
+  c(:config, :key1)    => 1
+  c('config', 'key1')  => 1
 
 
 === Applying Overlays
 
-c = ConfigLogic.new('path/to/config/dir', :overlays => [ { :name => 'config',
-                                                           :inputs => [:config, :config_test] } ] )
-c.config.key1 => 11
-c.config.key2 => 12
-c.config.key3 => 13
+  c = ConfigLogic.new('path/to/config/dir', :overlays => [ { :name => 'config',
+                                                             :inputs => [:config_prod, :config_dev] } ] )
+  c.config.key1 => 11
+  c.config.key2 => 12
+  c.config.key3 => 13
 
 
 === Applying Multiplexers
 
-c = ConfigLogic.new('path/to/config/dir', :multiplexers => [ { :name => 'key',
-                                                               :selector => Proc.new { "key#{1 + 1}".to_sym} },
-                                                               :inputs => [:key1, :key2, :key3] } ] )
-c.config.key => 2
+  c = ConfigLogic.new('path/to/config/dir', :multiplexers => [ { :name => 'key',
+                                                                 :selector => Proc.new {1 + 1 },
+                                                                 :inputs => {1 => :key1, 2 => :key2, 3 => :key3} } ] )
+  c.config.key => 2
 
 
 == Credits
