@@ -78,20 +78,43 @@ Imagine that your application has a config directory with the following layout
 
 === Applying Overlays
 
+An Overlay allows multiple config values to be merged in a particular order
+
+==== Globally
+
   c = ConfigLogic.new('path/to/config/dir', :overlays => [ { :name => 'config',
                                                              :inputs => [:config_prod, :config_dev] } ] )
   c.config.key1 => 11
   c.config.key2 => 12
   c.config.key3 => 13
 
+==== Locally
+
+  c.config.insert_overlay( { :name => 'config',
+                             :inputs => [:config_prod, :config_dev] } )
+  c.config.key1 => 11
+  c.config.key2 => 12
+  c.config.key3 => 13
 
 === Applying Multiplexers
+
+A multiplexer uses the result of a supplied code block to determine the value
+for a certain config key
+
+==== Globally
 
   c = ConfigLogic.new('path/to/config/dir', :multiplexers => [ { :name => 'key',
                                                                  :selector => Proc.new {1 + 1 },
                                                                  :inputs => {1 => :key1, 2 => :key2, 3 => :key3} } ] )
   c.config.key => 2
 
+==== Locally
+
+  c.config.insert_multiplexer({ :name => 'key',
+                                :selector => Proc.new {1 + 1 },
+                                :inputs => {1 => :key1, 2 => :key2, 3 => :key3} })
+  c.config.key => 2
+  
 
 == Credits
 
