@@ -29,14 +29,26 @@ protected
   def clone_with_new_path(path)
     clone = self.dup
     clone.instance_variable_set('@path', path)
-    clone.instance_variable_set('@data', @cache[*path])
+    new_delegate = \
+      clone.instance_variable_set('@data', @cache[*path])
+    clone.__setobj__(new_delegate)
     clone
   end
 
 private
   
   def method_missing(method_symbol, *args)
-    self[method_symbol] || super
+    method_name = method_symbol.to_s
+    element_matcher = ConfigLogic::LogicElement.available_elements.join('|')
+
+    if (val = self[method_symbol])
+      val
+    elsif /^insert_(#{element_matcher})$/ === method_name
+      type = ConfigLogic::LogicElement.name_to_type($1)
+      @cache.insert_logic_element(type.new(args.first), @data) if type
+    else
+      super
+    end
   end
 
 end

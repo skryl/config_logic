@@ -1,8 +1,11 @@
 class ConfigLogic::TreeCache < ConfigLogic::Cache
 
   def initialize(load_paths, params = {})
-    @global_logic = { ConfigLogic::Multiplexer => params[:multiplexers], 
-                      ConfigLogic::Overlay => params[:overlays] }
+    @global_logic = params.inject([]) do |a, (type_name, elements)|
+      type_name = type_name.to_s.singularize
+      type = ConfigLogic::LogicElement.name_to_type(type_name)
+      type ? a << elements.map { |settings| type.new(settings) } : a
+    end.flatten
     super
   end
 
@@ -15,10 +18,23 @@ class ConfigLogic::TreeCache < ConfigLogic::Cache
 
   def reload!(params = {})
     @cache = rebuild_primary_cache(params)
-    trim_cache! unless params[:no_trim]
-    @flat_cache = flatten_tree_cache
-    apply_global_logic!
+    unless @cache.empty?
+      trim_cache! unless params[:no_trim]
+      @flat_cache = flatten_tree_cache
+      apply_global_logic
+    end
     super
+  end
+
+  def insert_logic_element(element, node)
+    input_names = element.input_names
+    input_names.each do |input_name|
+      element.set_input(input_name, node[input_name])
+    end
+    log.debug "inserted logic element:\n#{element.pretty_inspect}"
+
+    node[element.name] = element.static? ? element.output : element
+    prune!(node, input_names)
   end
 
 private
@@ -63,7 +79,7 @@ private
     flatten.call(@cache) << @cache
   end
 
-  def nodes_at(keys, min_matches = 1)
+  def nodes_with_keys(keys, min_matches = 1)
     self.select do |node|
       node_keys = node.keys
       node_keys.size - (node_keys - keys).size >= min_matches
@@ -76,29 +92,18 @@ private
 
 # logic helpers
 
-  def apply_global_logic!
-    @global_logic.each do |klass, elements|
-      next if elements.blank?
-      elements.each do |settings|
-        log.debug "applying #{klass}: #{settings.inspect}"
-        insert_logic_element(klass, settings)
-      end
+  def apply_global_logic
+    @global_logic.each do |element|
+      log.debug "applying #{element.class}: #{[element.name, element.input_names].inspect}"
+      insert_global_logic_element(element)
     end
   end
 
-  def insert_logic_element(klass, settings)
-    input_keys, static = settings.values_at(:inputs, :static)
-    input_keys.stringify_symbols!
-    matching_nodes = nodes_at(input_keys, klass.min_inputs)
+  def insert_global_logic_element(element)
+    matching_nodes = nodes_with_keys(element.input_names, element.min_inputs)
+    log.debug "matching nodes:\n#{matching_nodes.pretty_inspect}"
     matching_nodes.each do |node|
-      # all cache branches that match the keys param are used as inputs to the
-      # logic element
-      inputs = node.values_at(*input_keys) 
-      element = klass.new(settings.merge(:input_names => settings[:inputs], :inputs=> inputs))
-      node[element.name] = static ? element.output : element
-
-      # finally the cache tree branches used as inputs are pruned
-      prune!(node, input_keys)
+      insert_logic_element(element, node)
     end
   end
 

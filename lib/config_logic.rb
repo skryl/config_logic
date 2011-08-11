@@ -12,8 +12,9 @@ class ConfigLogic < SimpleDelegator
   include ConfigLogic::Logger
 end
 
-require 'config_logic/core_ext/array'
+require 'config_logic/core_ext/class'
 require 'config_logic/core_ext/hash'
+require 'config_logic/core_ext/array'
 require 'config_logic/logger'
 require 'config_logic/cache'
 require 'config_logic/file_cache'

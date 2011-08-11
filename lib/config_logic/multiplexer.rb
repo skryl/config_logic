@@ -4,12 +4,19 @@ class ConfigLogic::Multiplexer < ConfigLogic::LogicElement
 
   def initialize(params)
     super
-    @inputs = params[:input_names].zip(params[:inputs]).to_hash
+    @multiplexer = params[:inputs]
+    @inputs = HashWithIndifferentAccess.new(@multiplexer.values.to_hash)
     @selector = params[:selector]
   end
 
   def output
-    @inputs[@selector.call]
+    return unless inputs_valid?
+    case @selector
+    when Proc
+      @inputs[@multiplexer[@selector.call]]
+    else
+      @inputs[@multiplexer[@selector]]
+    end
   end
 
 end

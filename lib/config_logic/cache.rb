@@ -15,10 +15,6 @@ class ConfigLogic::Cache < SimpleDelegator
 
 private
 
-  def rebuild_primary_cache(params)
-    {}
-  end
-
   def each
     @cache.each do |node|
       yield node

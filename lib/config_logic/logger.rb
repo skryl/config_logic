@@ -2,7 +2,7 @@ require 'buffered_logger'
 
 class ConfigLogic::Log
   private_class_method :new
-  LOG_LEVEL = 0
+  LOG_LEVEL = 6
 
   def self.init_log(log_level, color)
     @log = BufferedLogger.new(STDOUT, log_level || LOG_LEVEL, default_format)

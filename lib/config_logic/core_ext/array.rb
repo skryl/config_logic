@@ -1,11 +1,11 @@
 class Array
 
-  def stringify_symbols!
-    self.map! { |val| val.to_s if val.is_a? Symbol }
+  def stringify_symbols
+    self.map { |val| val.is_a?(Symbol) ? val.to_s : val }
   end
 
-  def symbolize_strings!
-    self.map! { |val| val.to_s if val.is_a? Symbol }
+  def symbolize_strings
+    self.map { |val| val.is_a?(Symbol) ? val.to_s : val }
   end
 
   def to_hash
