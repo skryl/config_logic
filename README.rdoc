@@ -19,7 +19,7 @@ The following gems will be installed along with config_logic
 
 == Installation
 
->> gem install config_logic
+=> gem install config_logic
 
 
 == Usage
