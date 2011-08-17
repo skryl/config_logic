@@ -3,7 +3,7 @@ class ConfigLogic::Cache < SimpleDelegator
   include Enumerable
 
   def initialize(load_paths, params = {})
-    @load_paths = load_paths
+    @load_paths = [load_paths].flatten
     reload!(params)
     super(@cache)
   end
@@ -12,8 +12,6 @@ class ConfigLogic::Cache < SimpleDelegator
     __setobj__(@cache)
     self
   end
-
-private
 
   def each
     @cache.each do |node|

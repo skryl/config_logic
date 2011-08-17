@@ -5,7 +5,7 @@ class ConfigLogic < SimpleDelegator
   def_delegators :@data, :inspect
 
   def initialize(load_paths, params = {})
-    @cache = TreeCache.new([load_paths].flatten, params)
+    @cache = TreeCache.new(load_paths, params)
     @path = params[:path] || []
     @data = @cache[*@path]
     super(@data)

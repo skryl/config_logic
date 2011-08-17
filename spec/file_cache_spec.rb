@@ -22,11 +22,11 @@ describe ConfigLogic::FileCache do
     @c = ConfigLogic::FileCache.new(CONFIG_DIR)
   end
 
-  it 'should initialize correctly' do
-    @c.instance_variable_get('@cache').should be_an_instance_of(Hash)
+  it 'should initialize' do
+    @c.should be_an_instance_of(ConfigLogic::FileCache)
   end
 
-  it 'should build a file cache of valid configs during initialization' do
+  it 'should build a valid file cache during initialization' do
     cache_valid?(CONFIG_DIR, @c.instance_variable_get('@cache')) 
   end
 

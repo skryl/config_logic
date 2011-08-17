@@ -1,9 +1,11 @@
 $: << File.dirname(__FILE__)
 
-# global
 require 'rubygems'
-require 'active_support/core_ext/class'
-require 'active_support/core_ext/string'
+require 'active_support/core_ext/class/attribute_accessors'
+require 'active_support/inflector'
+require 'active_support/core_ext/string/inflections'
+require 'active_support/core_ext/hash/indifferent_access'
+require 'active_support/core_ext/hash/deep_merge'
 require 'buffered_logger'
 require 'forwardable'
 require 'delegate'
@@ -14,7 +16,6 @@ class ConfigLogic < SimpleDelegator
 end
 
 require 'config_logic/core_ext/class'
-require 'config_logic/core_ext/hash'
 require 'config_logic/core_ext/array'
 require 'config_logic/logger'
 require 'config_logic/cache'

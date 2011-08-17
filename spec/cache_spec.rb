@@ -6,9 +6,8 @@ describe ConfigLogic::Cache do
     @c = ConfigLogic::Cache.new(CONFIG_DIR)
   end
 
-  it 'should initialize correctly' do
+  it 'should initialize' do
     @c.should be_an_instance_of(ConfigLogic::Cache)
-    @c.instance_variable_get('@load_paths').should == CONFIG_DIR
   end
 
   it 'should delegate unknown calls to the cache container' do
@@ -16,6 +15,10 @@ describe ConfigLogic::Cache do
     cache.public_methods(false).each do |m|
       @c.should respond_to(m)
     end
+  end
+
+  it 'should be enumerable' do
+    @c.should respond_to(:each)
   end
 
 end

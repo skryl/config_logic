@@ -14,7 +14,7 @@ class ConfigLogic::Overlay < ConfigLogic::LogicElement
     return unless inputs_valid?
     if @inputs.values.all? { |d| d.is_a? Hash }
       @order.inject({}) do |output, input_name|
-        output.merge!(@inputs[input_name])
+        output.deep_merge!(@inputs[input_name])
       end
     else
       @inputs[@order.last]

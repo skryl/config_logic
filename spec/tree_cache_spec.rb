@@ -6,9 +6,8 @@ describe ConfigLogic::TreeCache do
     @c = ConfigLogic::TreeCache.new(CONFIG_DIR)
   end
 
-  it 'should initialize correctly' do
-    @c.instance_variable_get('@cache').should be_a_kind_of(Hash)
-    @c.instance_variable_get('@flat_cache').should be_a_kind_of(Array)
+  it 'should initialize' do
+    @c.should be_an_instance_of(ConfigLogic::TreeCache)
   end
 
   it 'should build a valid tree cache' do

@@ -45,7 +45,7 @@ private
 
     tree_cache = HashWithIndifferentAccess.new
     file_cache.each do |path, content|
-      tree_cache = tree_cache.weave(hashify_path(path, content))
+      tree_cache = tree_cache.deep_merge(hashify_path(path, content))
     end
     tree_cache
   end

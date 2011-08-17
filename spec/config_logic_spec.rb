@@ -6,10 +6,8 @@ describe ConfigLogic do
     @c = ConfigLogic.new(CONFIG_DIR)
   end
 
-  it 'should initialize correctly' do
+  it 'should initialize' do
     @c.should be_an_instance_of(ConfigLogic)
-    @c.instance_variable_get('@cache').should be_an_instance_of(ConfigLogic::TreeCache)
-    @c.instance_variable_get('@path').should be_an_instance_of(Array)
   end
 
   it 'should delegate unknown calls to cache node pointed to by current path' do
@@ -19,12 +17,12 @@ describe ConfigLogic do
     end
   end
 
-  it 'should delegate reload! and inspect calls to cache' do
+  it 'should delegate :reload! and :inspect calls to cache' do
     @c.should respond_to(:reload!)
     @c.should respond_to(:inspect)
   end
 
-  it 'should return cache values using multiple access methods' do
+  it 'should be accessible via different access methods' do
     @c[:dir1, :config1, :key1, :nestedkey1].should == 1
     @c[:dir1][:config1][:key1][:nestedkey1].should == 1
     @c['dir1', 'config1', 'key1', 'nestedkey1'].should == 1
@@ -38,7 +36,7 @@ describe ConfigLogic do
     @c.dir1.config1.key1.should be_a_kind_of(ConfigLogic)
   end
 
-  it 'should apply local overlay element' do
+  it 'should apply local overlay elements' do
     @c.dir1.config1.insert_overlay({:name => :over, :inputs => [:key1, :key2, :key3]})
     overlayed_result = {"nestedkey1" => 1, "nestedkey2" => 2, "nestedkey3" => 3, 
                         "nestedkey4" => 4, "nestedkey5" => 5, "nestedkey6" => 6, 
@@ -48,7 +46,7 @@ describe ConfigLogic do
     @c[:dir1][:config2].keys.size.should == 3
   end
 
-  it 'should apply local multiplexer element' do
+  it 'should apply local multiplexer elements' do
     @c.dir1.insert_multiplexer({:name => :multi, :selector => 1, :inputs => {1 => :config1, 2 => :config2, 3 => :config3}})
     multiplexed_result = {"key1"=>{"nestedkey1"=>1, "nestedkey2"=>2, "nestedkey3"=>3},
                           "key2"=>{"nestedkey4"=>4, "nestedkey5"=>5, "nestedkey6"=>6},

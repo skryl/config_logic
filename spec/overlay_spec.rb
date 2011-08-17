@@ -10,14 +10,13 @@ describe ConfigLogic::Overlay do
     @e.set_input(:input3, {:a => 2, :c => 3})
   end
 
-  it 'should initialize correctly' do
+  it 'should initialize' do
     @e.should be_an_instance_of(ConfigLogic::Overlay)
     @e.should be_a_kind_of(ConfigLogic::LogicElement)
     @e.name.should == :an_overlay
     @e.inputs.should == {'input1' => {'a' => 1}, 
                          'input2' => {'b' => 2}, 
                          'input3' => {'a' => 2, 'c' => 3}}
-    @e.instance_variable_get('@order').should == [:input1, :input2, :input3]
   end
 
   it 'should output a propper overlay when all inputs are hashes' do

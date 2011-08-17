@@ -12,15 +12,14 @@ describe ConfigLogic::Multiplexer do
     @m.set_input(:c, 12)
   end
 
-  it 'should initialize correctly' do
+  it 'should initialize' do
     @m.should be_an_instance_of(ConfigLogic::Multiplexer)
     @m.should be_a_kind_of(ConfigLogic::LogicElement)
     @m.name.should == :a_multiplexer
     @m.inputs.should == {'a' => 10, 'b' => 11, 'c' => 12}
-    @m.instance_variable_get('@multiplexer').should == {1 => :a, 2 => :b, 3 => :c}
   end
 
-  it 'should have proper accessors' do
+  it 'should return selector proc' do
     @m.should respond_to(:selector)
   end
 
