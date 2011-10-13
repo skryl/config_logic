@@ -44,7 +44,7 @@ Imagine that your application has a config directory with the following layout,
       :key2: 12 
       :key3: 13
 
-  config/dir2/config_dev.yml -->
+  config/dir1/config_dev.yml -->
 
       :key4: 1
       :key5: 2
